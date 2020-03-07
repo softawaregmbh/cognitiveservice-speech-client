@@ -136,7 +136,7 @@ namespace SpeechClient.Audio
                     {
                         StartIndex = entityPart.EndIndex,
                         EndIndex = existingPart.EndIndex,
-                        Text = existingPart.Text.Substring(entityPart.EndIndex + 1, existingPart.EndIndex - entityPart.EndIndex - 1)
+                        Text = existingPart.Text.Substring(entityPart.EndIndex - existingPart.StartIndex + 1)
                     };
 
                     textParts.Insert(index, lastPart);
@@ -150,7 +150,7 @@ namespace SpeechClient.Audio
                     {
                         StartIndex = existingPart.StartIndex,
                         EndIndex = entityPart.StartIndex,
-                        Text = existingPart.Text.Substring(existingPart.StartIndex, entityPart.StartIndex - existingPart.StartIndex)
+                        Text = existingPart.Text.Substring(0, entityPart.StartIndex - existingPart.StartIndex)
                     };
 
                     textParts.Insert(index, prevPart);
