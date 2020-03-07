@@ -43,7 +43,7 @@ namespace SpeechClient.UI
             this.speechRecognizer.IntentRecognized += SpeechRecognizer_IntentRecognized;
 
             //await this.speechRecognizer.StartAsync();
-            await this.speechRecognizer.StartAsync(@"D:\temp\audis-notrufgespräche\testfile001.wav");
+            await this.speechRecognizer.StartAsync(@"D:\temp\audis-notrufgespräche\testfile002.wav");
         }
 
         private Task SpeechRecognizer_IntentRecognized(RecognitionResult result)

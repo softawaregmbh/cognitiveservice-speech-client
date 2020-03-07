@@ -2,7 +2,11 @@
 using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.CognitiveServices.Speech.Intent;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpeechClient.Audio
@@ -37,7 +41,7 @@ namespace SpeechClient.Audio
                     stopRecognition = new TaskCompletionSource<int>();
 
                     var model = LanguageUnderstandingModel.FromAppId(this.settings.LuisAppId);
-                    
+
                     intentRecognizer.AddAllIntents(model);
                     
                     intentRecognizer.SessionStarted += IntentRecognizer_SessionStarted;
@@ -48,7 +52,6 @@ namespace SpeechClient.Audio
                     intentRecognizer.SpeechStartDetected += IntentRecognizer_SpeechStartDetected;
                     intentRecognizer.Canceled += IntentRecognizer_Canceled;
 
-                    //await Task.Delay(1000);
                     await intentRecognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
 
                     Task.WaitAny(stopRecognition.Task);
@@ -89,13 +92,72 @@ namespace SpeechClient.Audio
             {
                 return;
             }
+            
+            var json = e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
+
+            var jsonObject = JObject.Parse(json);
+            var entities = jsonObject.GetValue("entities").ToObject<IEnumerable<RecognizedEntity>>();
+
+            var textParts = ExtractTextParts(entities, e.Result.Text);
 
             this.IntentRecognized?.Invoke(new RecognitionResult()
             {
                 Intent = e.Result.IntentId,
                 Text = e.Result.Text,
-                IsRecognizing = false
+                IsRecognizing = false,
+                Entities = entities,
+                TextParts = textParts
             });
+        }
+
+        private static IEnumerable<TextPart> ExtractTextParts(IEnumerable<RecognizedEntity> entities, string recognizedText)
+        {
+            var textParts = new List<TextPart>();
+            textParts.Add(new TextPart() { StartIndex = 0, EndIndex = recognizedText.Length, Text = recognizedText });
+
+            foreach (var entity in entities)
+            {
+                var existingPart = textParts.First(t => t.StartIndex <= entity.StartIndex && t.EndIndex >= entity.EndIndex);
+
+                var index = textParts.IndexOf(existingPart);
+                textParts.RemoveAt(index);
+
+                var entityPart = new TextPart()
+                {
+                    StartIndex = entity.StartIndex,
+                    EndIndex = entity.EndIndex,
+                    Text = entity.Entity,
+                    Entity = entity
+                };
+
+                if (existingPart.EndIndex > entityPart.EndIndex)
+                {
+                    var lastPart = new TextPart()
+                    {
+                        StartIndex = entityPart.EndIndex,
+                        EndIndex = existingPart.EndIndex,
+                        Text = existingPart.Text.Substring(entityPart.EndIndex + 1, existingPart.EndIndex - entityPart.EndIndex - 1)
+                    };
+
+                    textParts.Insert(index, lastPart);
+                }
+
+                textParts.Insert(index, entityPart);
+
+                if (existingPart.StartIndex < entityPart.StartIndex)
+                {
+                    var prevPart = new TextPart()
+                    {
+                        StartIndex = existingPart.StartIndex,
+                        EndIndex = entityPart.StartIndex,
+                        Text = existingPart.Text.Substring(existingPart.StartIndex, entityPart.StartIndex - existingPart.StartIndex)
+                    };
+
+                    textParts.Insert(index, prevPart);
+                }
+            }
+
+            return textParts;
         }
 
         private void IntentRecognizer_Recognizing(object sender, IntentRecognitionEventArgs e)
