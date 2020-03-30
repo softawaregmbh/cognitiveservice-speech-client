@@ -32,7 +32,9 @@ namespace SpeechClient.Audio
         public async Task StartAsync(string fileName = null)
         {
             var speechConfig = SpeechConfig.FromSubscription(this.settings.SubscriptionKey, this.settings.Region);
+            
             speechConfig.SpeechRecognitionLanguage = "de-de";
+            speechConfig.OutputFormat = OutputFormat.Detailed;
 
             using (var audioInput = fileName == null ? AudioConfig.FromDefaultMicrophoneInput() : AudioConfig.FromWavFileInput(fileName))
             {
@@ -41,7 +43,7 @@ namespace SpeechClient.Audio
                     stopRecognition = new TaskCompletionSource<int>();
 
                     var model = LanguageUnderstandingModel.FromAppId(this.settings.LuisAppId);
-
+                    
                     intentRecognizer.AddAllIntents(model);
                     
                     intentRecognizer.SessionStarted += IntentRecognizer_SessionStarted;
