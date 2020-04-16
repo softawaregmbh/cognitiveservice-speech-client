@@ -17,7 +17,6 @@ namespace SpeechClient.Audio
     public class SpeechRecognizer
     {
         private readonly SpeechRecognizerSettings settings;
-        //private Microsoft.CognitiveServices.Speech.SpeechRecognizer speechRecognizer;
         private TaskCompletionSource<int> stopRecognition;
 
         public SpeechRecognizer(IOptions<SpeechRecognizerSettings> settings)
@@ -32,7 +31,7 @@ namespace SpeechClient.Audio
         public async Task StartAsync(string fileName = null)
         {
             var speechConfig = SpeechConfig.FromSubscription(this.settings.SubscriptionKey, this.settings.Region);
-            
+
             speechConfig.SpeechRecognitionLanguage = "de-de";
             speechConfig.OutputFormat = OutputFormat.Detailed;
 
@@ -95,10 +94,12 @@ namespace SpeechClient.Audio
                 return;
             }
             
-            var json = e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
 
+            var json = e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
             var jsonObject = JObject.Parse(json);
+            
             var entities = jsonObject.GetValue("entities").ToObject<IEnumerable<RecognizedEntity>>();
+            var topIntent = jsonObject.GetValue("topScoringIntent").ToObject<RecognizedIntent>();
 
             var textParts = ExtractTextParts(entities, e.Result.Text);
 
@@ -108,7 +109,8 @@ namespace SpeechClient.Audio
                 Text = e.Result.Text,
                 IsRecognizing = false,
                 Entities = entities,
-                TextParts = textParts
+                TextParts = textParts,
+                Score = topIntent.Score
             });
         }
 

@@ -53,10 +53,14 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        
-                        <TextBlock Text="{Binding Intent}" Foreground="DarkGray" FontSize="14"/>
 
-                        <ItemsControl Grid.Row="1" ItemsSource="{Binding TextParts}">
+                        <StackPanel Orientation="Horizontal" TextBlock.Foreground="#FF606060" TextBlock.FontSize="14">
+                            <TextBlock Text="{Binding Intent}"/>
+                            <TextBlock Text=", " />                            
+                            <TextBlock Text="{Binding Score, StringFormat=P0}"/>
+                        </StackPanel>
+
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding TextParts}" Margin="20,5,0,20">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />
@@ -77,7 +81,7 @@
                                         </Border.Style>
                                         <Grid>
                                             <TextBlock Text="{Binding Text}" FontSize="18"/>
-                                            <TextBlock Text="{Binding Entity.Type}" FontSize="8" Foreground="Gray" Margin="0,-13, 0, 0" />
+                                            <TextBlock Text="{Binding Entity.Type}" FontSize="10" Foreground="Gray" Margin="0,-13, 0, 0" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

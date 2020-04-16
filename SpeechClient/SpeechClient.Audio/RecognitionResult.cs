@@ -13,5 +13,6 @@ namespace SpeechClient.Audio
         public bool IsRecognizing { get; set; }
         public IEnumerable<RecognizedEntity> Entities { get; internal set; }
         public IEnumerable<TextPart> TextParts { get; internal set; }
+        public float Score { get; internal set; }
     }
 }

@@ -54,6 +54,7 @@ namespace SpeechClient.UI
             else
             {
                 this.CurrentRecognitionText = string.Empty;
+
                 this.uiThread.Run(() => this.RecognitionResults.Insert(0, result));
             }
 
