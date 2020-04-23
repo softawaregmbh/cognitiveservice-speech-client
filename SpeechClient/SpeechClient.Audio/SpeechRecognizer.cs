@@ -96,22 +96,26 @@ namespace SpeechClient.Audio
             
 
             var json = e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
-            var jsonObject = JObject.Parse(json);
             
-            var entities = jsonObject.GetValue("entities").ToObject<IEnumerable<RecognizedEntity>>();
-            var topIntent = jsonObject.GetValue("topScoringIntent").ToObject<RecognizedIntent>();
+            if (!string.IsNullOrEmpty(json))
+            { 
+                var jsonObject = JObject.Parse(json);
+            
+                var entities = jsonObject.GetValue("entities").ToObject<IEnumerable<RecognizedEntity>>();
+                var topIntent = jsonObject.GetValue("topScoringIntent").ToObject<RecognizedIntent>();
 
-            var textParts = ExtractTextParts(entities, e.Result.Text);
+                var textParts = ExtractTextParts(entities, e.Result.Text);
 
-            this.IntentRecognized?.Invoke(new RecognitionResult()
-            {
-                Intent = e.Result.IntentId,
-                Text = e.Result.Text,
-                IsRecognizing = false,
-                Entities = entities,
-                TextParts = textParts,
-                Score = topIntent.Score
-            });
+                this.IntentRecognized?.Invoke(new RecognitionResult()
+                {
+                    Intent = e.Result.IntentId,
+                    Text = e.Result.Text,
+                    IsRecognizing = false,
+                    Entities = entities,
+                    TextParts = textParts,
+                    Score = topIntent.Score
+                });
+            }
         }
 
         private static IEnumerable<TextPart> ExtractTextParts(IEnumerable<RecognizedEntity> entities, string recognizedText)
