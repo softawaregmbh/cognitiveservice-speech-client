@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeechClient.UI", "SpeechClient.UI\SpeechClient.UI.csproj", "{F1781AD1-0FF1-4E68-A491-275B09B51E3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpeechClient.UI", "SpeechClient.UI\SpeechClient.UI.csproj", "{F1781AD1-0FF1-4E68-A491-275B09B51E3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeechClient.Audio", "SpeechClient.Audio\SpeechClient.Audio.csproj", "{1C55DB1C-588D-46E0-8609-09DB9B3AB7E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpeechClient.Audio", "SpeechClient.Audio\SpeechClient.Audio.csproj", "{1C55DB1C-588D-46E0-8609-09DB9B3AB7E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

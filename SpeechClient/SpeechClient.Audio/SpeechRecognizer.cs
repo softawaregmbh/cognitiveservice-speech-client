@@ -93,7 +93,6 @@ namespace SpeechClient.Audio
             {
                 return;
             }
-            
 
             var json = e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
             
@@ -103,13 +102,13 @@ namespace SpeechClient.Audio
             
                 var entities = jsonObject.GetValue("entities").ToObject<IEnumerable<RecognizedEntity>>();
                 var topIntent = jsonObject.GetValue("topScoringIntent").ToObject<RecognizedIntent>();
-
-                var textParts = ExtractTextParts(entities, e.Result.Text);
+                var query = jsonObject.GetValue("query").ToString();
+                var textParts = ExtractTextParts(entities, query);
 
                 this.IntentRecognized?.Invoke(new RecognitionResult()
                 {
                     Intent = e.Result.IntentId,
-                    Text = e.Result.Text,
+                    Text = query,
                     IsRecognizing = false,
                     Entities = entities,
                     TextParts = textParts,
@@ -118,10 +117,10 @@ namespace SpeechClient.Audio
             }
         }
 
-        private static IEnumerable<TextPart> ExtractTextParts(IEnumerable<RecognizedEntity> entities, string recognizedText)
+        private IEnumerable<TextPart> ExtractTextParts(IEnumerable<RecognizedEntity> entities, string recognizedText)
         {
             var textParts = new List<TextPart>();
-            textParts.Add(new TextPart() { StartIndex = 0, EndIndex = recognizedText.Length, Text = recognizedText });
+            textParts.Add(new TextPart() { StartIndex = 0, EndIndex = recognizedText.Length - 1, Text = recognizedText });
 
             foreach (var entity in entities)
             {
@@ -158,7 +157,7 @@ namespace SpeechClient.Audio
                     {
                         StartIndex = existingPart.StartIndex,
                         EndIndex = entityPart.StartIndex,
-                        Text = existingPart.Text.Substring(0, entityPart.StartIndex - existingPart.StartIndex)
+                        Text = existingPart.Text.Substring(0, entityPart.StartIndex - existingPart.StartIndex - 1)
                     };
 
                     textParts.Insert(index, prevPart);

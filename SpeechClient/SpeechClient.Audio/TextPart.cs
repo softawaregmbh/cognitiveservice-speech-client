@@ -11,6 +11,7 @@ namespace SpeechClient.Audio
         public string Text { get; set; }
 
         public RecognizedEntity Entity { get; set; }
-        public int EndIndex { get; internal set; }
+        
+        public int EndIndex { get; set; }
     }
 }

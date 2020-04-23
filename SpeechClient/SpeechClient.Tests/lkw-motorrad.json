@@ -1,0 +1,31 @@
+{
+  "query": "ein lkw und ein motorrad",
+  "topScoringIntent": {
+    "intent": "Beteiligte Fahrzeuge",
+    "score": 0.9757771
+  },
+  "entities": [
+    {
+      "entity": "lkw",
+      "type": "Fahrzeug",
+      "startIndex": 4,
+      "endIndex": 6,
+      "resolution": {
+        "values": [
+          "LKW"
+        ]
+      }
+    },
+    {
+      "entity": "motorrad",
+      "type": "Fahrzeug",
+      "startIndex": 16,
+      "endIndex": 23,
+      "resolution": {
+        "values": [
+          "Motorrad"
+        ]
+      }
+    }
+  ]
+}
